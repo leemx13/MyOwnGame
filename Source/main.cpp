@@ -1,48 +1,76 @@
 #include <windows.h>
-#include <GLFW/glfw3.h>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include "Application/application.h"
+#include "Scene/scene.h"
+
+class TestScene : public Scene
+{
+public:
+    explicit TestScene(Renderer2D& inRenderer)
+        : renderer(inRenderer)
+    {
+    }
+
+    void Load() override
+    {
+        std::cout << "TestScene Load\n";
+    }
+
+    void Init() override
+    {
+        std::cout << "TestScene Init\n";
+    }
+
+    void Update(float dt) override
+    {
+        (void)dt;
+    }
+
+    void Render() override
+    {
+        renderer.DrawQuad();
+    }
+
+    void Shutdown() override
+    {
+        std::cout << "TestScene Shutdown\n";
+    }
+
+private:
+    Renderer2D& renderer;
+};
 
 int WINAPI WinMain(HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
     LPSTR lpCmdLine,
-    int nShowCmd)
+    int nShowCmd = 1)
 {
     (void)hInstance;
     (void)hPrevInstance;
     (void)lpCmdLine;
     (void)nShowCmd;
 
-    // Optional: enable console for debugging
     AllocConsole();
-    GLFWwindow* window;
 
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
+    FILE* dummyFile = nullptr;
+    freopen_s(&dummyFile, "CONOUT$", "w", stdout);
+    freopen_s(&dummyFile, "CONOUT$", "w", stderr);
 
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1600, 900, "GAY-ME", NULL, NULL);
-    if (!window)
+    Application app;
+
+    if (!app.Init())
     {
-        glfwTerminate();
         return -1;
     }
 
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
+    app.GetSceneManager().ChangeScene(
+        std::make_unique<TestScene>(app.GetRenderer())
+    );
 
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+    app.Run();
+    app.Shutdown();
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
     return 0;
 }
