@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1600, 900, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1600, 900, "GAY-ME", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
