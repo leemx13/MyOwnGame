@@ -22,7 +22,7 @@ GLuint Shader::Compile(GLenum type, const char* source)
     {
         char infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "Shader compilation failed:\n" << infoLog << '\n';
+        std::cout << "Shader compilation failed:\n" << infoLog << '\n';
         glDeleteShader(shader);
         return 0;
     }
@@ -54,7 +54,7 @@ bool Shader::LoadFromSource(const char* vertexSrc, const char* fragmentSrc)
     {
         char infoLog[512];
         glGetProgramInfoLog(programID, 512, nullptr, infoLog);
-        std::cerr << "Shader linking failed:\n" << infoLog << '\n';
+        std::cout << "Shader linking failed:\n" << infoLog << '\n';
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);

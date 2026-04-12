@@ -148,12 +148,14 @@
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Render\render.cpp" />
     <ClCompile Include="Source\Render\shader.cpp" />
+    <ClCompile Include="Source\Scene\GameScene\mainMenu.cpp" />
     <ClCompile Include="Source\Scene\sceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Application\application.h" />
     <ClInclude Include="Headers\Render\render.h" />
     <ClInclude Include="Headers\Render\shader.h" />
+    <ClInclude Include="Headers\Scene\GameScene\mainMenu.h" />
     <ClInclude Include="Headers\Scene\scene.h" />
     <ClInclude Include="Headers\Scene\sceneManager.h" />
   </ItemGroup>

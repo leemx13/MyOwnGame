@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Render">
       <UniqueIdentifier>{08f03dee-1abf-441d-9677-fef49ae72915}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene\GameScene">
+      <UniqueIdentifier>{363744e3-e8b3-42d4-8912-34a24aef24d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\GameScene">
+      <UniqueIdentifier>{b0783660-a2a6-4dd6-9b58-0355d0af0ace}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -51,6 +57,9 @@
     <ClCompile Include="Source\Scene\sceneManager.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\GameScene\mainMenu.cpp">
+      <Filter>Source Files\Scene\GameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Application\application.h">
@@ -67,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="Headers\Scene\sceneManager.h">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Scene\GameScene\mainMenu.h">
+      <Filter>Header Files\Scene\GameScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

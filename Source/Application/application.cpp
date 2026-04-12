@@ -2,12 +2,13 @@
 #include <glad/glad.h>       
 #include <GLFW/glfw3.h>      
 #include <iostream>
+#include <thread>
 
 bool Application::Init()
 {
     if (!glfwInit())
     {
-        std::cerr << "Failed to initialize GLFW.\n";
+        std::cout << "Failed to initialize GLFW.\n";
         return false;
     }
 
@@ -15,30 +16,30 @@ bool Application::Init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(1280, 720, "GAM200 Engine", nullptr, nullptr);
+    window = glfwCreateWindow(1600, 900, "GAM200 Engine", nullptr, nullptr);
     if (!window)
     {
-        std::cerr << "Failed to create GLFW window.\n";
+        std::cout << "Failed to create GLFW window.\n";
         glfwTerminate();
         return false;
     }
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // 1 is to match fps to monitor refresh rate 
+    //glfwSwapInterval(1); // 1 is to match fps to monitor refresh rate 
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
-        std::cerr << "Failed to initialize GLAD.\n";
+        std::cout << "Failed to initialize GLAD.\n";
         glfwDestroyWindow(window);
         glfwTerminate();
         return false;
     }
 
-    glViewport(0, 0, 1280, 720);
+    glViewport(0, 0, 1600, 900);
 
     if (!renderer.Init())
     {
-        std::cerr << "Failed to initialize renderer.\n";
+        std::cout<< "Failed to initialize renderer.\n";
         glfwDestroyWindow(window);
         glfwTerminate();
         return false;
@@ -47,25 +48,33 @@ bool Application::Init()
     return true;
 }
 
-void Application::Run()
+void Application::Run(float FPS)
 {
-    float lastTime = static_cast<float>(glfwGetTime());
+    const float targetFrameTime = 1.0f / FPS;
 
     while (!glfwWindowShouldClose(window))
     {
-        float currentTime = static_cast<float>(glfwGetTime());
-        float dt = currentTime - lastTime;
-        lastTime = currentTime;
+        float startTime = static_cast<float>(glfwGetTime());
 
         glfwPollEvents();
 
-        sceneManager.Update(dt);
+        sceneManager.Update(targetFrameTime);
 
-        renderer.BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
+        renderer.BeginFrame(0.1f, 0.1f, 0.15f, 1.0f);
         sceneManager.Render();
         renderer.EndFrame();
 
         glfwSwapBuffers(window);
+
+        float endTime = static_cast<float>(glfwGetTime());
+        float frameTime = endTime - startTime;
+
+        if (frameTime < targetFrameTime)
+        {
+            std::this_thread::sleep_for(
+                std::chrono::duration<float>(targetFrameTime - frameTime)
+            );
+        }
     }
 }
 

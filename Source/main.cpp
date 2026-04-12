@@ -1,75 +1,37 @@
 #include <windows.h>
 #include <cstdio>
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include "Application/application.h"
 #include "Scene/scene.h"
+#include "Scene/GameScene/mainMenu.h"
 
-class TestScene : public Scene
-{
-public:
-    explicit TestScene(Renderer2D& inRenderer)
-        : renderer(inRenderer)
-    {
-    }
-
-    void Load() override
-    {
-        std::cout << "TestScene Load\n";
-    }
-
-    void Init() override
-    {
-        std::cout << "TestScene Init\n";
-    }
-
-    void Update(float dt) override
-    {
-        (void)dt;
-    }
-
-    void Render() override
-    {
-        renderer.DrawQuad();
-    }
-
-    void Shutdown() override
-    {
-        std::cout << "TestScene Shutdown\n";
-    }
-
-private:
-    Renderer2D& renderer;
-};
-
-int WINAPI WinMain(HINSTANCE hInstance,
-    HINSTANCE hPrevInstance,
-    LPSTR lpCmdLine,
-    int nShowCmd = 1)
+int WINAPI WinMain(
+    _In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPSTR lpCmdLine,
+    _In_ int nShowCmd)
 {
     (void)hInstance;
     (void)hPrevInstance;
     (void)lpCmdLine;
     (void)nShowCmd;
 
-    AllocConsole();
-
-    FILE* dummyFile = nullptr;
-    freopen_s(&dummyFile, "CONOUT$", "w", stdout);
-    freopen_s(&dummyFile, "CONOUT$", "w", stderr);
+    AllocConsole();                                  //allocate stuff to console to print std::cout
+    FILE* console = nullptr;
+    freopen_s(&console, "CONOUT$", "w", stdout);
 
     Application app;
 
-    if (!app.Init())
-    {
+    if (!app.Init())                                    //if can't initialize app end program
         return -1;
-    }
 
     app.GetSceneManager().ChangeScene(
-        std::make_unique<TestScene>(app.GetRenderer())
+        std::make_unique<MainMenu>(app.GetRenderer())
     );
 
-    app.Run();
+    app.Run(60.0f);             //set fps
     app.Shutdown();
 
     return 0;

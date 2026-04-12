@@ -9,7 +9,7 @@ class Application
 {
 public:
     bool Init();
-    void Run();
+    void Run(float FPS);
     void Shutdown();
 
     GLFWwindow* GetWindow() const { return window; }
