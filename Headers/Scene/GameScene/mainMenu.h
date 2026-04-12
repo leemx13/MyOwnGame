@@ -17,4 +17,6 @@ public:
 
 private:
     Renderer2D& renderer;
+    Mesh quad;
+    Texture2D spriteTexture;
 };

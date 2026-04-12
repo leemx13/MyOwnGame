@@ -1,4 +1,5 @@
 #include "Application/application.h"
+#include "Globals/globals.h"
 #include <glad/glad.h>       
 #include <GLFW/glfw3.h>      
 #include <iostream>
@@ -16,7 +17,7 @@ bool Application::Init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(1600, 900, "GAM200 Engine", nullptr, nullptr);
+    window = glfwCreateWindow(WINWIDTH, WINHEIGHT, "GAM200 Engine", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Failed to create GLFW window.\n";
@@ -54,27 +55,15 @@ void Application::Run(float FPS)
 
     while (!glfwWindowShouldClose(window))
     {
-        float startTime = static_cast<float>(glfwGetTime());
-
         glfwPollEvents();
 
         sceneManager.Update(targetFrameTime);
 
-        renderer.BeginFrame(0.1f, 0.1f, 0.15f, 1.0f);
+        renderer.BeginFrame(0.0f, 0.0f, 0.0f, 1.0f);
         sceneManager.Render();
         renderer.EndFrame();
 
         glfwSwapBuffers(window);
-
-        float endTime = static_cast<float>(glfwGetTime());
-        float frameTime = endTime - startTime;
-
-        if (frameTime < targetFrameTime)
-        {
-            std::this_thread::sleep_for(
-                std::chrono::duration<float>(targetFrameTime - frameTime)
-            );
-        }
     }
 }
 

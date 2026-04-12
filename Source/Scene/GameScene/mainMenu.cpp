@@ -2,6 +2,8 @@
 #include "Scene/GameScene/mainMenu.h"
 #include "Render/render.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 void MainMenu::Load()
 {
@@ -10,21 +12,35 @@ void MainMenu::Load()
 
 void MainMenu::Init()
 {
-	std::cout << "MainMenu Init\n";
+	std::cout << "TestScene Init\n";
+
+	quad = renderer.CreateSpriteQuadMesh();
+
+	if (!renderer.LoadTexture(spriteTexture, "Assets/cat.png"))
+	{
+		std::cout << "Texture load failed.\n";
+	}
 }
 
 void MainMenu::Update(float dt)
 {
 	(void)dt;
-	std::cout << "FPS: " << 1.0 / dt << "\n";
+	std::cout << "\rFPS: " << 1.0 / dt << std::flush;
 }
 
 void MainMenu::Render()
 {
-	renderer.DrawQuad();
+	renderer.DrawSprite(
+		quad,
+		spriteTexture,
+		0.0f, 0.0f,   // pos
+		100.0f, 100.0f    // size
+	);
 }
 
 void MainMenu::Shutdown()
 {
-	std::cout << "MainMenu Shutdown\n";
+	renderer.DestroyMesh(quad);
+	renderer.DestroyTexture(spriteTexture);
+	std::cout << "TestScene Shutdown\n";
 }

@@ -37,6 +37,12 @@
     <Filter Include="Header Files\Scene\GameScene">
       <UniqueIdentifier>{b0783660-a2a6-4dd6-9b58-0355d0af0ace}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Globals">
+      <UniqueIdentifier>{adf7cf53-02ba-4cc8-9d96-9e173ef0f23e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Globals">
+      <UniqueIdentifier>{95ed89d0-a94a-4bab-81b6-7adaf888d21e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -60,6 +66,9 @@
     <ClCompile Include="Source\Scene\GameScene\mainMenu.cpp">
       <Filter>Source Files\Scene\GameScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Globals\globals.cpp">
+      <Filter>Source Files\Globals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Application\application.h">
@@ -79,6 +88,15 @@
     </ClInclude>
     <ClInclude Include="Headers\Scene\GameScene\mainMenu.h">
       <Filter>Header Files\Scene\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Render\mesh.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Render\texture2D.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Globals\globals.h">
+      <Filter>Header Files\Globals</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
