@@ -28,7 +28,7 @@ int WINAPI WinMain(
         return -1;
 
     app.GetSceneManager().ChangeScene(
-        std::make_unique<MainMenu>(app.GetRenderer())
+        std::make_unique<MainMenu>(app.GetRenderer(), app.GetWindow())
     );
 
     app.Run(60.0f);             //set fps

@@ -1,6 +1,7 @@
 #include "Application/application.h"
 #include "Scene/GameScene/mainMenu.h"
 #include "Render/render.h"
+#include "GLFW/glfw3.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -24,8 +25,13 @@ void MainMenu::Init()
 
 void MainMenu::Update(float dt)
 {
-	(void)dt;
+	glfwPollEvents();
 	std::cout << "\rFPS: " << 1.0 / dt << std::flush;
+	(void)dt;
+	double mousex, mousey;
+	glfwGetCursorPos(window, &mousex, &mousey);
+	std::cout << " Mouse X: " << mousex << " Mouse Y: " << mousey << std::flush;
+
 }
 
 void MainMenu::Render()
@@ -36,6 +42,7 @@ void MainMenu::Render()
 		0.0f, 0.0f,   // pos
 		100.0f, 100.0f    // size
 	);
+
 }
 
 void MainMenu::Shutdown()

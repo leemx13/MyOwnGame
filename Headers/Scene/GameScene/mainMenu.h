@@ -7,7 +7,7 @@
 class MainMenu : public Scene
 {
 public:
-    explicit MainMenu(Renderer2D& inRenderer) : renderer(inRenderer) {}            // ctor for Test scene
+    explicit MainMenu(Renderer2D& inRenderer, GLFWwindow* inWindow) : renderer(inRenderer), window(inWindow) {}            // ctor for Test scene
 
     void Load() override;
     void Init() override;
@@ -19,4 +19,5 @@ private:
     Renderer2D& renderer;
     Mesh quad;
     Texture2D spriteTexture;
+    GLFWwindow* window = nullptr;
 };
