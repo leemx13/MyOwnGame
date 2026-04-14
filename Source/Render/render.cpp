@@ -214,7 +214,7 @@ void Renderer2D::DrawSprite(
     GLint texLoc = glGetUniformLocation(shader.GetProgram(), "uTexture");
 
     glUniform2f(posLoc, Globals::WorldToNormalized::ConvertX(posX, WINWIDTH), Globals::WorldToNormalized::ConvertY(posY, WINHEIGHT));
-    glUniform2f(scaleLoc, Globals::WorldToNormalized::ConvertScaleX(scaleX, WINWIDTH), Globals::WorldToNormalized::ConvertScaleX(scaleY, WINHEIGHT));
+    glUniform2f(scaleLoc, Globals::WorldToNormalized::ConvertScaleX(scaleX, WINWIDTH), Globals::WorldToNormalized::ConvertScaleY(scaleY, WINHEIGHT));
     glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
 
     glActiveTexture(GL_TEXTURE0);

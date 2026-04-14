@@ -25,13 +25,7 @@ void MainMenu::Init()
 
 void MainMenu::Update(float dt)
 {
-	glfwPollEvents();
 	std::cout << "\rFPS: " << 1.0 / dt << std::flush;
-	(void)dt;
-	double mousex, mousey;
-	glfwGetCursorPos(window, &mousex, &mousey);
-	std::cout << " Mouse X: " << mousex << " Mouse Y: " << mousey << std::flush;
-
 }
 
 void MainMenu::Render()
