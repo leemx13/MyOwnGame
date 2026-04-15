@@ -20,4 +20,5 @@ private:
     Mesh quad;
     Texture2D spriteTexture;
     GLFWwindow* window = nullptr;
+    UVRect fullUV;
 };

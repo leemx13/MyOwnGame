@@ -10,23 +10,32 @@
 bool Renderer2D::Init()
 {
     const char* vertexSrc = R"(
-        #version 330 core
-        layout (location = 0) in vec2 aPos;
-        layout (location = 1) in vec2 aUV;
+    #version 330 core
+    layout (location = 0) in vec2 aPos;
+    layout (location = 1) in vec2 aUV;
 
-        out vec2 vUV;
+    out vec2 vUV;
 
-        uniform vec2 uPosition;
-        uniform vec2 uScale;
+    uniform vec2 uPosition;
+    uniform vec2 uScale;
+    uniform vec2 uScreenSize;
 
-        void main()
-        {
-            vec2 scaled = aPos * uScale;
-            vec2 finalPos = scaled + uPosition;
-            gl_Position = vec4(finalPos, 0.0, 1.0);
-            vUV = aUV;
-        }
-    )";
+    uniform vec2 uUVMin;
+    uniform vec2 uUVMax;
+
+    void main()
+    {
+        vec2 scaled = aPos * uScale;
+        vec2 worldPos = scaled + uPosition;
+
+        float ndcX = worldPos.x / (uScreenSize.x * 0.5);
+        float ndcY = worldPos.y / (uScreenSize.y * 0.5);
+
+        gl_Position = vec4(ndcX, ndcY, 0.0, 1.0);
+
+        vUV = mix(uUVMin, uUVMax, aUV);
+    }
+)";
 
     const char* fragmentSrc = R"(
         #version 330 core
@@ -203,19 +212,29 @@ void Renderer2D::DrawSprite(
     float posX,
     float posY,
     float scaleX,
-    float scaleY
+    float scaleY,
+    const UVRect& uv
 )
 {
     shader.Use();
 
     GLint posLoc = glGetUniformLocation(shader.GetProgram(), "uPosition");
     GLint scaleLoc = glGetUniformLocation(shader.GetProgram(), "uScale");
+    GLint screenLoc = glGetUniformLocation(shader.GetProgram(), "uScreenSize");
     GLint colorLoc = glGetUniformLocation(shader.GetProgram(), "uColor");
     GLint texLoc = glGetUniformLocation(shader.GetProgram(), "uTexture");
 
-    glUniform2f(posLoc, Globals::WorldToNormalized::ConvertX(posX, WINWIDTH), Globals::WorldToNormalized::ConvertY(posY, WINHEIGHT));
-    glUniform2f(scaleLoc, Globals::WorldToNormalized::ConvertScaleX(scaleX, WINWIDTH), Globals::WorldToNormalized::ConvertScaleY(scaleY, WINHEIGHT));
-    glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+    GLint uvMinLoc = glGetUniformLocation(shader.GetProgram(), "uUVMin");
+    GLint uvMaxLoc = glGetUniformLocation(shader.GetProgram(), "uUVMax");
+
+    glUniform2f(posLoc, posX, posY);
+    glUniform2f(scaleLoc, scaleX, scaleY);
+    glUniform2f(screenLoc, (float)WINWIDTH, (float)WINHEIGHT);
+    glUniform4f(colorLoc, 1, 1, 1, 1);
+
+    //set uv range
+    glUniform2f(uvMinLoc, uv.u0, uv.v0);
+    glUniform2f(uvMaxLoc, uv.u1, uv.v1);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture.id);

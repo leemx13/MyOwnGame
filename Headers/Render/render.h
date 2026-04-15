@@ -4,6 +4,12 @@
 #include "Render/mesh.h"
 #include "Render/texture2D.h"
 
+struct UVRect
+{
+    float u0, v0;
+    float u1, v1;
+};
+
 class Renderer2D
 {
 public:
@@ -26,7 +32,8 @@ public:
         float posX,
         float posY,
         float scaleX,
-        float scaleY
+        float scaleY,
+        const UVRect& uv
     );
 
 private:
