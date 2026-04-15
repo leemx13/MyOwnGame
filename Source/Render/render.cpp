@@ -38,32 +38,32 @@ bool Renderer2D::Init()
 )";
 
     const char* fragmentSrc = R"(
-        #version 330 core
-        in vec2 vUV;
-        out vec4 FragColor;
+    #version 330 core
+    in vec2 vUV;
+    out vec4 FragColor;
 
-        uniform sampler2D uTexture;
-        uniform vec4 uColor;
+    uniform sampler2D uTexture;
 
-        void main()
-        {
-            FragColor = texture(uTexture, vUV) * uColor;
-        }
-    )";
+    void main()
+    {
+        FragColor = texture(uTexture, vUV);
+    }
+)";
 
     if (!shader.LoadFromSource(vertexSrc, fragmentSrc))
-    {
         return false;
-    }
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    sharedQuad = CreateSpriteQuadMesh();
 
     return true;
 }
 
 void Renderer2D::Shutdown()
 {
+    DestroyMesh(sharedQuad);
 }
 
 void Renderer2D::BeginFrame(float r, float g, float b, float a)
@@ -82,14 +82,13 @@ Mesh Renderer2D::CreateSpriteQuadMesh()
 
     float vertices[] =
     {
-        // x      y      u     v
-        -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f, 1.0f, 1.0f,
 
-        -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.0f, 1.0f
+        -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f, 1.0f
     };
 
     mesh.vertexCount = 6;
@@ -107,7 +106,6 @@ Mesh Renderer2D::CreateSpriteQuadMesh()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     return mesh;
@@ -115,28 +113,8 @@ Mesh Renderer2D::CreateSpriteQuadMesh()
 
 void Renderer2D::DestroyMesh(Mesh& mesh)
 {
-    if (mesh.vbo != 0)
-    {
-        glDeleteBuffers(1, &mesh.vbo);
-        mesh.vbo = 0;
-    }
-
-    if (mesh.vao != 0)
-    {
-        glDeleteVertexArrays(1, &mesh.vao);
-        mesh.vao = 0;
-    }
-
-    mesh.vertexCount = 0;
-}
-
-void Renderer2D::DrawMesh(const Mesh& mesh)
-{
-    shader.Use();
-
-    glBindVertexArray(mesh.vao);
-    glDrawArrays(GL_TRIANGLES, 0, mesh.vertexCount);
-    glBindVertexArray(0);
+    if (mesh.vbo) glDeleteBuffers(1, &mesh.vbo);
+    if (mesh.vao) glDeleteVertexArrays(1, &mesh.vao);
 }
 
 bool Renderer2D::LoadTexture(Texture2D& texture, const char* filePath)
@@ -151,43 +129,20 @@ bool Renderer2D::LoadTexture(Texture2D& texture, const char* filePath)
         0
     );
 
-    if (!data)
-    {
-        std::cout << "Failed to load texture: " << filePath << '\n';
-        return false;
-    }
+    if (!data) return false;
 
-    GLenum format = GL_RGB;
-    if (texture.channels == 1)
-        format = GL_RED;
-    else if (texture.channels == 3)
-        format = GL_RGB;
-    else if (texture.channels == 4)
-        format = GL_RGBA;
+    GLenum format = (texture.channels == 4) ? GL_RGBA : GL_RGB;
 
     glGenTextures(1, &texture.id);
     glBindTexture(GL_TEXTURE_2D, texture.id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, format,
+        texture.width, texture.height,
+        0, format, GL_UNSIGNED_BYTE, data);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        format,
-        texture.width,
-        texture.height,
-        0,
-        format,
-        GL_UNSIGNED_BYTE,
-        data
-    );
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
     stbi_image_free(data);
 
     return true;
@@ -195,18 +150,48 @@ bool Renderer2D::LoadTexture(Texture2D& texture, const char* filePath)
 
 void Renderer2D::DestroyTexture(Texture2D& texture)
 {
-    if (texture.id != 0)
-    {
+    if (texture.id)
         glDeleteTextures(1, &texture.id);
-        texture.id = 0;
-    }
-
-    texture.width = 0;
-    texture.height = 0;
-    texture.channels = 0;
 }
 
-void Renderer2D::DrawSprite(
+void Renderer2D::SetAtlasTexture(const Texture2D& atlas)
+{
+    atlasTexture = atlas;
+    hasAtlas = true;
+}
+
+void Renderer2D::RegisterSprite(int id, const UVRect& uv, float width, float height)
+{
+    spriteDefs[id] = { uv, width, height };
+}
+
+void Renderer2D::DrawSpriteByID(
+    int id,
+    float posX,
+    float posY,
+    float scaleX,
+    float scaleY
+)
+{
+    if (!hasAtlas) return;
+
+    auto it = spriteDefs.find(id);
+    if (it == spriteDefs.end()) return;
+
+    const SpriteDefinition& def = it->second;
+
+    DrawSpriteInternal(
+        sharedQuad,
+        atlasTexture,
+        posX,
+        posY,
+        def.width * scaleX,
+        def.height * scaleY,
+        def.uv
+    );
+}
+
+void Renderer2D::DrawSpriteInternal(
     const Mesh& mesh,
     const Texture2D& texture,
     float posX,
@@ -218,31 +203,15 @@ void Renderer2D::DrawSprite(
 {
     shader.Use();
 
-    GLint posLoc = glGetUniformLocation(shader.GetProgram(), "uPosition");
-    GLint scaleLoc = glGetUniformLocation(shader.GetProgram(), "uScale");
-    GLint screenLoc = glGetUniformLocation(shader.GetProgram(), "uScreenSize");
-    GLint colorLoc = glGetUniformLocation(shader.GetProgram(), "uColor");
-    GLint texLoc = glGetUniformLocation(shader.GetProgram(), "uTexture");
+    glUniform2f(glGetUniformLocation(shader.GetProgram(), "uPosition"), posX, posY);
+    glUniform2f(glGetUniformLocation(shader.GetProgram(), "uScale"), scaleX, scaleY);
+    glUniform2f(glGetUniformLocation(shader.GetProgram(), "uScreenSize"), WINWIDTH, WINHEIGHT);
 
-    GLint uvMinLoc = glGetUniformLocation(shader.GetProgram(), "uUVMin");
-    GLint uvMaxLoc = glGetUniformLocation(shader.GetProgram(), "uUVMax");
+    glUniform2f(glGetUniformLocation(shader.GetProgram(), "uUVMin"), uv.u0, uv.v0);
+    glUniform2f(glGetUniformLocation(shader.GetProgram(), "uUVMax"), uv.u1, uv.v1);
 
-    glUniform2f(posLoc, posX, posY);
-    glUniform2f(scaleLoc, scaleX, scaleY);
-    glUniform2f(screenLoc, (float)WINWIDTH, (float)WINHEIGHT);
-    glUniform4f(colorLoc, 1, 1, 1, 1);
-
-    //set uv range
-    glUniform2f(uvMinLoc, uv.u0, uv.v0);
-    glUniform2f(uvMaxLoc, uv.u1, uv.v1);
-
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture.id);
-    glUniform1i(texLoc, 0);
 
     glBindVertexArray(mesh.vao);
     glDrawArrays(GL_TRIANGLES, 0, mesh.vertexCount);
-    glBindVertexArray(0);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }

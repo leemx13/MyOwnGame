@@ -1,13 +1,17 @@
 #pragma once
-#include <memory>
-#include <iostream>
 #include "Scene/scene.h"
 #include "Render/render.h"
+#include "ECS/ecs.h"
+#include "ECS/spriteDatabase.h"
+#include "ECS/renderSystem.h"
+#include <GLFW/glfw3.h>
 
 class MainMenu : public Scene
 {
 public:
-    explicit MainMenu(Renderer2D& inRenderer, GLFWwindow* inWindow) : renderer(inRenderer), window(inWindow) {}            // ctor for Test scene
+    MainMenu(Renderer2D& r, GLFWwindow* w)
+        : renderer(r), window(w) {
+    }
 
     void Load() override;
     void Init() override;
@@ -17,8 +21,11 @@ public:
 
 private:
     Renderer2D& renderer;
-    Mesh quad;
-    Texture2D spriteTexture;
     GLFWwindow* window = nullptr;
-    UVRect fullUV;
+
+    Texture2D atlas;
+
+    ECS ecs;
+    SpriteDatabase spriteDB;
+    RenderSystem renderSystem;
 };

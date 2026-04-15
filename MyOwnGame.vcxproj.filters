@@ -43,6 +43,12 @@
     <Filter Include="Header Files\Globals">
       <UniqueIdentifier>{95ed89d0-a94a-4bab-81b6-7adaf888d21e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{e6beae27-50d9-4aa3-a292-da7f95c08a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{98b6b76f-f9ad-44cb-9967-231c2436f2e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -68,6 +74,18 @@
     </ClCompile>
     <ClCompile Include="Source\Globals\globals.cpp">
       <Filter>Source Files\Globals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ECS\ECS.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ECS\renderSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ECS\spriteDatabase.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ECS\spriteDefinitions.cpp">
+      <Filter>Source Files\ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +115,21 @@
     </ClInclude>
     <ClInclude Include="Headers\Globals\globals.h">
       <Filter>Header Files\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ECS\ECS.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ECS\renderSystem.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ECS\spriteDatabase.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ECS\spriteIDs.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ECS\spriteDefinitions.h">
+      <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
